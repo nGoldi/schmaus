@@ -1,10 +1,10 @@
 package parser
 
 import (
+	"fmt"
 	"schmaus/ast"
 	"schmaus/lexer"
 	"schmaus/token"
-	"fmt"
 )
 
 type Parser struct {
@@ -56,9 +56,24 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
+	case token.RETURN:
+		return p.parseReturnStatement()	
 	default:
 		return nil
 	}
+}
+
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	stmt := &ast.ReturnStatement{Token: p.curToken}
+
+	p.NextToken()
+
+	// TODO expression
+	for !p.curTokenIs(token.SEMICOLON) {
+		p.NextToken()
+	}
+
+	return stmt
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
